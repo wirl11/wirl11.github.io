@@ -1,0 +1,155 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+ /** { padding: 0; margin: 0;}*/
+html{
+    /*height: 100%;*/
+ }
+body{
+    /*font-family: Palatino Linotype, Helvetica Neue, Helvetica, Arial, sans-serif;*/
+    font-family: 'Open Sans', sans-serif;
+    color: #444;
+    font-size: 11pt;
+    height: 100%;
+}
+
+
+.icon-block {
+  padding: 0px;
+}
+.icon-block .material-icons {
+    font-size: inherit;
+}
+
+
+.author{
+    font-size: 16pt;
+}
+.school{
+    font-size: 12pt;
+}
+
+.title{
+    font-size: 20pt;
+    font-weight: bold;
+}
+.subtitle{
+    font-size: 14pt;
+    font-style: italic;
+    font-weight: bold;
+}
+
+pre{
+    font-size: 12pt;
+    padding: 10px;
+    border-radius: 10px;
+    /*background-color: #EEEEEE;*/
+}
+
+
+.fa-folder-open{
+  color: #f4d275;
+}
+
+.footer-copyright{
+  background-color: #e0e0e0 !important;
+}
+
+table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px;
+    position: relative;
+}
+
+
+.caption{
+    font-size: 14pt;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+.method-tag{
+    /*border: 0px solid black;*/
+    font-size: 12pt;
+    /*width: 6%;*/
+    /*height: 50px;*/
+    /*height: 200%;*/
+    /*line-height: 26px;*/
+    /*word-wrap:break-word;*/
+    color: #224B8D;
+    /*display: inline-block;*/
+    /*flex:left;*/
+    /*align-items:*/
+    /*text-align: center;*/
+    /*vertical-align: middle;*/
+    /*display: table-cell;*/
+    /*line-height: 10px;*/
+}
+
+/*.cell {
+    display: table-cell;
+    vertical-align: middle;
+}*/
+
+.method-tag:hover{
+    /*font-weight: bold;*/
+    color: red;
+    cursor: pointer;
+}
+
+.img_selector{
+    text-align: center;
+}
+
+.demo-img{
+    min-height: 450px !important;
+    /*max-height: 800px !important;*/
+}
+
+.note{
+    font-size: 12pt;
+}
+
+.row{
+    margin-bottom: 0pt;
+}
+
+.emphasis{
+    font-size: 13pt;
+    font-weight: bold;
+    color: red;
+}
+
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    float:none !important;
+    /* reset the text-align */
+    text-align:center;
+    /* inline-block space fix */
+    margin-right:-4px;
+    min-width: 170px;
+}
+
+.mmw {
+    min-width: 100px; 
+    max-width:150px;
+}
+/*#tableContainer {
+    background: #e5e5e5;
+    border: 1px solid gray;
+    overflow: hidden;
+    position: relative;
+    padding: 10px;
+}
+table.initial {
+    background: #ffffff;    
+}*/

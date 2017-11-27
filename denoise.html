@@ -1,0 +1,336 @@
+---
+permalink: /denoise.html
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- <meta name="author" content="jasonlai"> -->
+  <title>Comparison</title>
+
+  <!-- CSS  -->
+  <link href="https://gist.githubusercontent.com/tim-peterson/3772020/raw/e5173e1584a2955d099a581f20794a1ad8d08178/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <link href="/style_clean.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+
+<body>
+    <div class="container main-body">
+
+    <div class="row center">
+
+      <div class="input-field col col-centered mmw">
+        <select id="tasks" onchange="change_task()">
+          <!-- FILLED WITH JS -->
+        </select>
+        <label>Task</label>
+      </div>
+      <div class="input-field col col-centered mmw">
+        <select id="datasets" onchange="change_dataset()">
+          <!-- FILLED WITH JS -->
+        </select>
+        <label>Dataset</label>
+      </div>
+
+      <div class="input-field col col-centered mmw">
+        <select id="variants" onchange="change_variant()">
+            <!-- FILLED WITH JS -->
+        </select>
+        <label>Upsampling scale</label>
+      </div>
+
+      <div class="input-field col col-centered mmw">
+        <select id="imgs" onchange="change_variant()">
+          <!-- FILLED WITH JS -->
+        </select>
+        <label>Select Image</label>
+      </div>
+
+    
+    </div>
+
+      
+      <!-- <div class="container-fluid"> -->
+        <div class="row section row-centered center" id="methods_table">
+        </div>
+      <!-- </div> -->
+
+
+    
+<!--     <div class="section row center">
+      <table>
+        <tbody>
+          <tr id="methods_table">
+             FILLED WITH JS 
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+ -->
+
+      <div class="row center">
+        <div class="subtitle" id="img-caption">
+          baby_
+        </div>
+        <div class="center">
+          <img class="responsive-img demo-img" name="demo-img" id="img-bicubic" src="data/set5/x8/baby_bicubic.png"  onerror="this.src='/assets/deep-image-prior/NA.jpg'">
+        </div>
+      </div>
+
+      
+    <!-- </div> -->
+  </div>
+
+  <!--  Scripts-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+  
+  <script>
+        var task_dict = { 
+                          SR: {
+                                datasets: {
+                                    Set5: ['baby', 'bird', 'butterfly', 'head', 'woman'],
+                                    Set14: ["baboon", "barbara", "bridge", "coastguard", "comic", "face", "flowers", "foreman", "lenna", "man", "monarch", "pepper", "ppt3", "zebra"]
+                                },
+                                methods: [
+                                    {id:"1 GT",       text:"1. Ground Truth"},
+                                    {id:"2 bicubic",  text:"2. Bicubic"},
+                                    {id:"3 LapSRN",   text:"3. LapSRN"}
+                                ],
+                                variants: ['x4', 'x8']
+                              },
+                          Denoising: {
+                                datasets: {
+                                  Color: ["hill", "F16", "peppers", "kodim02", "kodim12", "baboon", "lena", "kodim01", "kodim03"],
+                                  Gray: ["Cameraman256", "barbara", "couple", "hill", "man", "peppers256", "Lena512", "boat", "fingerprint", "house", "montage"]
+                                },
+                                methods: [
+                                  {id:"1 GT",         text:"1. Original"},
+                                  {id:"2 noisy",      text:"2. Corrupted"},
+                                  {id:"3 bm3d",       text:"3. BM3D"},
+                                  {id:"4 nlm",        text:"4. NLM"},
+                                  {id:"5 deep_prior", text:"5. Deep Prior (ours)"}
+                                ],
+                                variants: ['25', '50']
+                          }
+                        };
+
+      // function fill_methods_select(methods) {
+      //   $("[id='methods_table']").empty();
+      //   var mt = document.getElementById("methods_table");
+      //   for (i = 0; i < methods.length; i++) { 
+      //       var td=document.createElement("td");
+      //       td.id=methods[i].id;
+      //       td.innerHTML = methods[i].text;
+      //       td.className="method-tag";
+
+      //       mt.appendChild(td);
+
+      //       $("[id='" + methods[i].id + "']").attr("onmouseover","change_method(this.id)");
+      //   }
+      // }
+
+      function fill_methods_select(methods) {
+        $("[id='methods_table']").empty();
+        var mt = document.getElementById("methods_table");
+        for (i = 0; i < methods.length; i++) { 
+            var td=document.createElement("div");
+            td.id=methods[i].id;
+            td.innerHTML = methods[i].text;
+            td.className="col-centered method-tag col";
+
+            mt.appendChild(td);
+
+            $("[id='" + methods[i].id + "']").attr("onmouseover","change_method(this.id)");
+        }
+      }
+
+      function fill_variants_select(variants) {
+        $("[id='variants']").empty();
+        var sel = document.getElementById("variants");
+        for (i = 0; i < variants.length; i++) { 
+            var opt=document.createElement("option");
+            opt.value = variants[i];
+            opt.innerHTML = variants[i];
+        
+            sel.appendChild(opt);
+        }
+        sel.selectedIndex = 0;
+
+        return variants[0];
+      }
+
+      function fill_imgs_select(imgs) {
+        $("[id='imgs']").empty();
+        var sel = document.getElementById("imgs");
+        for (i = 0; i < imgs.length; i++) { 
+            var opt=document.createElement("option");
+            opt.value = imgs[i];
+            opt.innerHTML = imgs[i];
+            
+            sel.appendChild(opt);
+        }
+        sel.selectedIndex = 0;
+
+        return imgs[0];
+      }
+
+      function fill_datasets_select(datasets) {
+        $("[id='datasets']").empty();
+        var sel = document.getElementById("datasets");
+        for (i = 0; i < datasets.length; i++) { 
+            var opt=document.createElement("option");
+            opt.value = datasets[i];
+            opt.innerHTML = datasets[i];
+            
+            sel.appendChild(opt);
+        }
+        sel.selectedIndex = 0;
+
+        return datasets[0];
+      }
+
+      function fill_tasks_select(tasks) {
+        $("[id='tasks']").empty();
+        var sel = document.getElementById("tasks");
+        for (i = 0; i < tasks.length; i++) { 
+            var opt=document.createElement("option");
+            opt.value = tasks[i];
+            opt.innerHTML = tasks[i];
+            
+            sel.appendChild(opt);
+        }
+        sel.selectedIndex = 0;
+
+        return tasks[0];
+      }
+
+
+      // function change_dataset(dataset) {
+      //     // var dataset = 'Set5';
+
+      //     // Fill methods
+      //     var methods = sr_methods;
+      //     fill_methods_select(methods);
+          
+          
+      //     // Fill dataset
+      //     var imgs = datasets.sr[dataset]
+      //     fill_imgs_select(imgs);
+          
+      //     // Sigma/scale
+      //     var ar = ['x4', 'x8'];
+      //     fill_scale_select(ar);
+      // }
+
+      function change_task() {
+        var x = document.getElementById("tasks");
+        var i = x.selectedIndex;
+        var selected_task = x.options[i].value;
+
+        fill_datasets_select(Object.keys(task_dict[selected_task].datasets));
+        change_dataset();
+      }
+
+      function change_dataset() {
+        var x = document.getElementById("tasks");
+        var i = x.selectedIndex;
+        var selected_task = x.options[i].value;
+
+        var x = document.getElementById("datasets");
+        var i = x.selectedIndex;
+        var selected_dataset = x.options[i].value;
+
+        var selected_variant = fill_variants_select(task_dict[selected_task].variants);
+        var selected_img     = fill_imgs_select(task_dict[selected_task].datasets[selected_dataset]);
+        var selected_method = fill_methods_select(task_dict[selected_task].methods);
+
+        $('select').material_select();
+      }
+
+
+      $(document).ready(function(){
+        $('.materialboxed').materialbox();
+
+
+
+        // Init selectors
+        var selected_task    = fill_tasks_select(Object.keys(task_dict));
+        change_task(selected_task)
+        
+        $('select').material_select();
+    
+    }); // end of document ready
+
+    var idx_to_key = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '+', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/']
+
+    function change_variant() {
+        var img = document.getElementsByName("demo-img")[0];
+        var method = img.id.split("-")[1];
+        change_method(method);
+    }
+
+    function change_method(method_) {
+        var s = method_.split(' ');
+        var method_idx = s[0];
+        var method = s[1];
+
+        // console.log("4 MSLapSRN_D5R8".split(" "), method_idx, method);
+
+        var x = document.getElementById("tasks");
+        var i = x.selectedIndex;
+        var task = x.options[i].value;
+
+        x = document.getElementById("datasets");
+        i = x.selectedIndex;
+        var dataset = x.options[i].value;
+
+        x = document.getElementById("variants");
+        i = x.selectedIndex;
+        var variant = x.options[i].value;
+
+        x = document.getElementById("imgs");
+        i = x.selectedIndex;
+        var name = x.options[i].value;
+
+        var img = document.getElementsByName("demo-img")[0];
+        var filename = name + "_" + method;
+        img.src = "/assets/deep-image-prior/" + task + "/" + dataset + "/" + variant + "/" + filename + ".png";
+        img.id = "img-" + method_;
+
+        var caption = document.getElementById("img-caption");
+        caption.innerHTML = idx_to_key[method_idx - 1] + ". " + method;
+    }
+
+
+    document.onkeypress = function checkKeycode(event) {
+        var keycode, keyChar;
+
+        if(!event) var event = window.event;
+        if (event.keyCode) keycode = event.keyCode;
+        else if(event.which) keycode = event.which;
+        key = String.fromCharCode(keycode);
+
+        key_idx = idx_to_key.indexOf(key);
+
+        // console.log(key_idx);
+
+        table = document.getElementById("methods_table");
+        if (key_idx < table.children.length) {
+          var method = table.children[key_idx].id;
+          // console.log(method);
+          change_method(method);
+        }
+
+
+
+
+    }
+  </script>
+  <!-- Latest compiled and minified JavaScript -->
+
+  </body>
+</html>
